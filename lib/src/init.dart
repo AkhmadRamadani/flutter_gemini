@@ -1,16 +1,11 @@
 import 'dart:async';
 import 'dart:typed_data';
-import 'package:flutter_gemini/src/models/candidates/candidates.dart';
-import 'package:flutter_gemini/src/models/part/part.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'config/constants.dart';
 import 'implement/gemini_service.dart';
-import 'models/content/content.dart';
-import 'models/gemini_model/gemini_model.dart';
-import 'models/generation_config/generation_config.dart';
 import 'repository/gemini_interface.dart';
 import 'package:dio/dio.dart';
 import 'implement/gemini_implement.dart';
-import 'models/gemini_safety/gemini_safety.dart';
 
 /// [Gemini]
 /// Flutter Google Gemini SDK. Google Gemini is a set of cutting-edge large language models
@@ -186,16 +181,22 @@ class Gemini implements GeminiInterface {
   /// print(response?.content?.parts.first);
   /// ```
   @override
-  Future<Candidates?> chat(List<Content> chats,
-          {String? modelName,
-          List<SafetySetting>? safetySettings,
-          GenerationConfig? generationConfig,
-          String? systemPrompt}) =>
-      _impl.chat(chats,
-          generationConfig: generationConfig,
-          safetySettings: safetySettings,
-          modelName: modelName,
-          systemPrompt: systemPrompt);
+  Future<Candidates?> chat(
+    List<Content> chats, {
+    String? modelName,
+    List<SafetySetting>? safetySettings,
+    GenerationConfig? generationConfig,
+    String? systemPrompt,
+    TimeoutConfig? timeoutConfig,
+  }) =>
+      _impl.chat(
+        chats,
+        generationConfig: generationConfig,
+        safetySettings: safetySettings,
+        modelName: modelName,
+        systemPrompt: systemPrompt,
+        timeoutConfig: timeoutConfig,
+      );
 
   /// Streams the ongoing chat interactions and responses in real-time. This method
   /// allows you to send a list of chat messages (contents) and receive responses as a stream,
@@ -219,24 +220,34 @@ class Gemini implements GeminiInterface {
     String? modelName,
     List<SafetySetting>? safetySettings,
     GenerationConfig? generationConfig,
+    TimeoutConfig? timeoutConfig,
   }) =>
-      _impl.streamChat(chats,
-          modelName: modelName,
-          safetySettings: safetySettings,
-          generationConfig: generationConfig);
+      _impl.streamChat(
+        chats,
+        modelName: modelName,
+        safetySettings: safetySettings,
+        generationConfig: generationConfig,
+        timeoutConfig: timeoutConfig,
+      );
 
   /// [countTokens] When using long prompts, it might be useful to count tokens
   /// before sending any content to the model.
   /// * not implemented yet
   @override
-  Future<int?> countTokens(String text,
-          {String? modelName,
-          List<SafetySetting>? safetySettings,
-          GenerationConfig? generationConfig}) =>
-      _impl.countTokens(text,
-          generationConfig: generationConfig,
-          safetySettings: safetySettings,
-          modelName: modelName);
+  Future<int?> countTokens(
+    String text, {
+    String? modelName,
+    List<SafetySetting>? safetySettings,
+    GenerationConfig? generationConfig,
+    TimeoutConfig? timeoutConfig,
+  }) =>
+      _impl.countTokens(
+        text,
+        generationConfig: generationConfig,
+        safetySettings: safetySettings,
+        modelName: modelName,
+        timeoutConfig: timeoutConfig,
+      );
 
   /// [info]
   /// If you `GET` a model's URL, the API used the `get` method to return
@@ -256,33 +267,43 @@ class Gemini implements GeminiInterface {
   /// for the entire result, and instead use streaming to handle partial results.
   @Deprecated('Please use `prompt` or `promptStream` instead')
   @override
-  Stream<Candidates> streamGenerateContent(String text,
-          {List<Uint8List>? images,
-          String? modelName,
-          List<SafetySetting>? safetySettings,
-          GenerationConfig? generationConfig}) =>
-      _impl.streamGenerateContent(text,
-          images: images,
-          generationConfig: generationConfig,
-          safetySettings: safetySettings,
-          modelName: modelName);
+  Stream<Candidates> streamGenerateContent(
+    String text, {
+    List<Uint8List>? images,
+    String? modelName,
+    List<SafetySetting>? safetySettings,
+    GenerationConfig? generationConfig,
+    TimeoutConfig? timeoutConfig,
+  }) =>
+      _impl.streamGenerateContent(
+        text,
+        images: images,
+        generationConfig: generationConfig,
+        safetySettings: safetySettings,
+        modelName: modelName,
+        timeoutConfig: timeoutConfig,
+      );
 
   /// [textAndImage] If the input contains both text and image, use
   /// the `gemini-1.5-flash` model. The following snippets help you build a request and send it to the REST API.
   @Deprecated('Please use `prompt` or `promptStream` instead')
   @override
-  Future<Candidates?> textAndImage(
-          {required String text,
-          required List<Uint8List> images,
-          String? modelName,
-          List<SafetySetting>? safetySettings,
-          GenerationConfig? generationConfig}) =>
+  Future<Candidates?> textAndImage({
+    required String text,
+    required List<Uint8List> images,
+    String? modelName,
+    List<SafetySetting>? safetySettings,
+    GenerationConfig? generationConfig,
+    TimeoutConfig? timeoutConfig,
+  }) =>
       _impl.textAndImage(
-          text: text,
-          images: images,
-          generationConfig: generationConfig,
-          safetySettings: safetySettings,
-          modelName: modelName);
+        text: text,
+        images: images,
+        generationConfig: generationConfig,
+        safetySettings: safetySettings,
+        modelName: modelName,
+        timeoutConfig: timeoutConfig,
+      );
 
   /// This method is deprecated. Please use `prompt` or `promptStream` instead.
   ///
@@ -310,14 +331,20 @@ class Gemini implements GeminiInterface {
   /// greater flexibility.
   @Deprecated('Please use `prompt` or `promptStream` instead')
   @override
-  Future<Candidates?> text(String text,
-          {String? modelName,
-          List<SafetySetting>? safetySettings,
-          GenerationConfig? generationConfig}) =>
-      _impl.text(text,
-          generationConfig: generationConfig,
-          safetySettings: safetySettings,
-          modelName: modelName);
+  Future<Candidates?> text(
+    String text, {
+    String? modelName,
+    List<SafetySetting>? safetySettings,
+    GenerationConfig? generationConfig,
+    TimeoutConfig? timeoutConfig,
+  }) =>
+      _impl.text(
+        text,
+        generationConfig: generationConfig,
+        safetySettings: safetySettings,
+        modelName: modelName,
+        timeoutConfig: timeoutConfig,
+      );
 
   /// [Embedding] is a technique used to represent information as a
   /// list of floating point numbers in an array.
@@ -329,14 +356,20 @@ class Gemini implements GeminiInterface {
   ///
   /// Use the `embedding-001` model with either [embedContent] or [batchEmbedContents]
   @override
-  Future<List<List<num>?>?> batchEmbedContents(List<String> texts,
-          {String? modelName,
-          List<SafetySetting>? safetySettings,
-          GenerationConfig? generationConfig}) =>
-      _impl.batchEmbedContents(texts,
-          safetySettings: safetySettings,
-          generationConfig: generationConfig,
-          modelName: modelName);
+  Future<List<List<num>?>?> batchEmbedContents(
+    List<String> texts, {
+    String? modelName,
+    List<SafetySetting>? safetySettings,
+    GenerationConfig? generationConfig,
+    TimeoutConfig? timeoutConfig,
+  }) =>
+      _impl.batchEmbedContents(
+        texts,
+        safetySettings: safetySettings,
+        generationConfig: generationConfig,
+        modelName: modelName,
+        timeoutConfig: timeoutConfig,
+      );
 
   /// Embeds the provided text content into a vector representation, typically used for
   /// similarity search, semantic analysis, or other tasks that require a vectorized
@@ -352,14 +385,20 @@ class Gemini implements GeminiInterface {
   /// print(embedding); // A list of numbers representing the text's embedding.
   /// ```
   @override
-  Future<List<num>?> embedContent(String text,
-          {String? modelName,
-          List<SafetySetting>? safetySettings,
-          GenerationConfig? generationConfig}) =>
-      _impl.embedContent(text,
-          safetySettings: safetySettings,
-          generationConfig: generationConfig,
-          modelName: modelName);
+  Future<List<num>?> embedContent(
+    String text, {
+    String? modelName,
+    List<SafetySetting>? safetySettings,
+    GenerationConfig? generationConfig,
+    TimeoutConfig? timeoutConfig,
+  }) =>
+      _impl.embedContent(
+        text,
+        safetySettings: safetySettings,
+        generationConfig: generationConfig,
+        modelName: modelName,
+        timeoutConfig: timeoutConfig,
+      );
 
   dynamic typeProvider;
   bool disableAutoUpdateModelName;
@@ -398,12 +437,14 @@ class Gemini implements GeminiInterface {
     String? model,
     List<SafetySetting>? safetySettings,
     GenerationConfig? generationConfig,
+    TimeoutConfig? timeoutConfig,
   }) =>
       _impl.prompt(
         parts: parts,
         generationConfig: generationConfig,
         model: model,
         safetySettings: safetySettings,
+        timeoutConfig: timeoutConfig,
       );
 
   /// Sends a request to the AI and listens to a real-time stream of responses.
@@ -432,15 +473,18 @@ class Gemini implements GeminiInterface {
   /// });
   /// ```
   @override
-  Stream<Candidates?> promptStream(
-          {required List<Part> parts,
-          String? model,
-          List<SafetySetting>? safetySettings,
-          GenerationConfig? generationConfig}) =>
+  Stream<Candidates?> promptStream({
+    required List<Part> parts,
+    String? model,
+    List<SafetySetting>? safetySettings,
+    GenerationConfig? generationConfig,
+    TimeoutConfig? timeoutConfig,
+  }) =>
       _impl.promptStream(
         parts: parts,
         generationConfig: generationConfig,
         model: model,
         safetySettings: safetySettings,
+        timeoutConfig: timeoutConfig,
       );
 }

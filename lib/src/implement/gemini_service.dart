@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:flutter_gemini/src/models/timeout_config/timeout_config.dart';
 import 'package:flutter_gemini/src/repository/api_interface.dart';
 import 'package:flutter_gemini/src/utils/gemini_exception_handler_mixin.dart';
 import '../init.dart';
@@ -36,6 +38,7 @@ class GeminiService extends ApiInterface with GeminiExceptionHandler {
     GenerationConfig? generationConfig,
     List<SafetySetting>? safetySettings,
     bool isStreamResponse = false,
+    TimeoutConfig? timeout,
   }) async {
     cancelToken ??= CancelToken(); // Ensure cancelToken is initialized.
 
@@ -58,6 +61,10 @@ class GeminiService extends ApiInterface with GeminiExceptionHandler {
           generationConfig?.toJson() ?? this.generationConfig?.toJson() ?? {};
     }
 
+    if (timeout != null) {
+      log(timeout.debug());
+    }
+
     // Make the POST request using Dio.
     return handler(() => dio.post(
           route,
@@ -66,9 +73,10 @@ class GeminiService extends ApiInterface with GeminiExceptionHandler {
             'key': apiKey
           }, // Include the API key in the query parameters.
           options: Options(
-              responseType: isStreamResponse == true
-                  ? ResponseType.stream
-                  : null), // Set response type if streaming is enabled.
+            responseType: isStreamResponse == true ? ResponseType.stream : null,
+            receiveTimeout: timeout?.receiveTimeout,
+            sendTimeout: timeout?.sendTimeout,
+          ), // Set response type if streaming is enabled.
           cancelToken: cancelToken, // Attach the cancel token.
         ));
   }
@@ -77,14 +85,21 @@ class GeminiService extends ApiInterface with GeminiExceptionHandler {
   ///
   /// [route] is the endpoint route.
   @override
-  Future<Response> get(String route) async {
+  Future<Response> get(String route, {TimeoutConfig? timeout}) async {
     cancelToken ??= CancelToken(); // Ensure cancelToken is initialized.
 
+    if (timeout != null) {
+      log(timeout.debug());
+    }
     // Make the GET request using Dio.
     return handler(() => dio.get(route,
         queryParameters: {
           'key': apiKey
         }, // Include the API key in the query parameters.
+        options: Options(
+          receiveTimeout: timeout?.receiveTimeout,
+          sendTimeout: timeout?.sendTimeout,
+        ),
         cancelToken: cancelToken)); // Attach the cancel token.
   }
 

@@ -34,10 +34,12 @@ class GeminiImpl implements GeminiInterface {
     String? modelName,
     List<SafetySetting>? safetySettings,
     GenerationConfig? generationConfig,
+    TimeoutConfig? timeoutConfig,
   }) async {
     final resolvedModel = await _modelManager.resolveModelName(
         userModel: modelName, expectedModel: 'embedding-001');
     return _requestHandler.executeRequest(
+      timeoutConfig: timeoutConfig,
       endpoint:
           '${Constants.baseUrl}${Constants.defaultVersion}/$resolvedModel:batchEmbedContents',
       data: GeminiDataBuilder.buildBatchEmbedData(texts),
@@ -51,11 +53,13 @@ class GeminiImpl implements GeminiInterface {
     String? modelName,
     List<SafetySetting>? safetySettings,
     GenerationConfig? generationConfig,
+    TimeoutConfig? timeoutConfig,
     String? systemPrompt,
   }) async {
     final resolvedModel = await _modelManager.resolveModelName(
         userModel: modelName, expectedModel: Constants.defaultModel);
     return _requestHandler.executeRequest(
+      timeoutConfig: timeoutConfig,
       endpoint:
           '${Constants.baseUrl}${Constants.defaultVersion}/$resolvedModel:${Constants.defaultGenerateType}',
       data: GeminiDataBuilder.buildChatData(chats, systemPrompt),
@@ -69,10 +73,12 @@ class GeminiImpl implements GeminiInterface {
     String? modelName,
     List<SafetySetting>? safetySettings,
     GenerationConfig? generationConfig,
+    TimeoutConfig? timeoutConfig,
   }) async {
     final resolvedModel = await _modelManager.resolveModelName(
         userModel: modelName, expectedModel: Constants.defaultModel);
     return _requestHandler.executeRequest(
+      timeoutConfig: timeoutConfig,
       endpoint:
           '${Constants.baseUrl}${Constants.defaultVersion}/$resolvedModel:countTokens',
       data: GeminiDataBuilder.buildTextData(text),
@@ -86,10 +92,12 @@ class GeminiImpl implements GeminiInterface {
     String? modelName,
     List<SafetySetting>? safetySettings,
     GenerationConfig? generationConfig,
+    TimeoutConfig? timeoutConfig,
   }) async {
     final resolvedModel = await _modelManager.resolveModelName(
         userModel: modelName, expectedModel: 'embedding-001');
     return _requestHandler.executeRequest(
+      timeoutConfig: timeoutConfig,
       endpoint:
           '${Constants.baseUrl}${Constants.defaultVersion}/$resolvedModel:embedContent',
       data: GeminiDataBuilder.buildEmbedData(text),
@@ -99,8 +107,10 @@ class GeminiImpl implements GeminiInterface {
   }
 
   @override
-  Future<GeminiModel> info({required String model}) async {
+  Future<GeminiModel> info(
+      {required String model, TimeoutConfig? timeoutConfig}) async {
     return _requestHandler.executeRequest(
+      timeoutConfig: timeoutConfig,
       endpoint: '${Constants.baseUrl}${Constants.defaultVersion}/$model',
       isGetRequest: true,
       responseParser: (data) => GeminiModel.fromJson(data),
@@ -108,8 +118,9 @@ class GeminiImpl implements GeminiInterface {
   }
 
   @override
-  Future<List<GeminiModel>> listModels() async {
+  Future<List<GeminiModel>> listModels({TimeoutConfig? timeoutConfig}) async {
     return _requestHandler.executeRequest(
+      timeoutConfig: timeoutConfig,
       endpoint: '${Constants.baseUrl}${Constants.defaultVersion}/models',
       isGetRequest: true,
       responseParser: (data) => GeminiModel.jsonToList(data['models']),
@@ -122,10 +133,12 @@ class GeminiImpl implements GeminiInterface {
     String? modelName,
     List<SafetySetting>? safetySettings,
     GenerationConfig? generationConfig,
+    TimeoutConfig? timeoutConfig,
   }) async {
     final resolvedModel = await _modelManager.resolveModelName(
         userModel: modelName, expectedModel: Constants.defaultModel);
     final candidate = await _requestHandler.executeRequest(
+      timeoutConfig: timeoutConfig,
       endpoint:
           '${Constants.baseUrl}${Constants.defaultVersion}/$resolvedModel:${Constants.defaultGenerateType}',
       data: GeminiDataBuilder.buildTextData(text),
@@ -142,10 +155,12 @@ class GeminiImpl implements GeminiInterface {
     String? modelName,
     List<SafetySetting>? safetySettings,
     GenerationConfig? generationConfig,
+    TimeoutConfig? timeoutConfig,
   }) async {
     final resolvedModel = await _modelManager.resolveModelName(
         userModel: modelName, expectedModel: 'gemini-1.5-flash');
     return _requestHandler.executeRequest(
+      timeoutConfig: timeoutConfig,
       endpoint:
           '${Constants.baseUrl}${Constants.defaultVersion}/$resolvedModel:${Constants.defaultGenerateType}',
       data: GeminiDataBuilder.buildTextAndImageData(text, images),
@@ -159,10 +174,12 @@ class GeminiImpl implements GeminiInterface {
     String? model,
     List<SafetySetting>? safetySettings,
     GenerationConfig? generationConfig,
+    TimeoutConfig? timeoutConfig,
   }) async {
     final resolvedModel = await _modelManager.resolveModelName(
         userModel: model, expectedModel: Constants.defaultModel);
     return _requestHandler.executeRequest(
+      timeoutConfig: timeoutConfig,
       endpoint:
           '${Constants.baseUrl}${Constants.defaultVersion}/$resolvedModel:${Constants.defaultGenerateType}',
       data: GeminiDataBuilder.buildPromptData(parts),
@@ -176,10 +193,12 @@ class GeminiImpl implements GeminiInterface {
     String? modelName,
     List<SafetySetting>? safetySettings,
     GenerationConfig? generationConfig,
+    TimeoutConfig? timeoutConfig,
   }) async* {
     final resolvedModel = await _modelManager.resolveModelName(
         userModel: modelName, expectedModel: Constants.defaultModel);
     yield* _requestHandler.executeStreamRequest(
+      timeoutConfig: timeoutConfig,
       endpoint:
           '${Constants.baseUrl}${Constants.defaultVersion}/$resolvedModel:streamGenerateContent',
       data: GeminiDataBuilder.buildChatData(chats, null),
@@ -193,10 +212,12 @@ class GeminiImpl implements GeminiInterface {
     String? modelName,
     List<SafetySetting>? safetySettings,
     GenerationConfig? generationConfig,
+    TimeoutConfig? timeoutConfig,
   }) async* {
     final resolvedModel = await _modelManager.resolveModelName(
         userModel: modelName, expectedModel: Constants.defaultModel);
     yield* _requestHandler.executeStreamRequest(
+      timeoutConfig: timeoutConfig,
       endpoint:
           '${Constants.baseUrl}${Constants.defaultVersion}/$resolvedModel:streamGenerateContent',
       data: GeminiDataBuilder.buildTextAndImageData(text, images),
@@ -209,10 +230,12 @@ class GeminiImpl implements GeminiInterface {
     String? model,
     List<SafetySetting>? safetySettings,
     GenerationConfig? generationConfig,
+    TimeoutConfig? timeoutConfig,
   }) async* {
     final resolvedModel = await _modelManager.resolveModelName(
         userModel: model, expectedModel: Constants.defaultModel);
     yield* _requestHandler.executeStreamRequest(
+      timeoutConfig: timeoutConfig,
       endpoint:
           '${Constants.baseUrl}${Constants.defaultVersion}/$resolvedModel:streamGenerateContent',
       data: GeminiDataBuilder.buildPromptData(parts),

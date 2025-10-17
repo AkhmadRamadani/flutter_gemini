@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_gemini/src/models/timeout_config/timeout_config.dart';
 import 'package:flutter_gemini/src/utils/gemini_response_parser.dart';
 import 'package:flutter_gemini/src/implement/gemini_service.dart';
 import 'package:flutter_gemini/src/init.dart';
@@ -15,12 +16,13 @@ class GeminiRequestHandler {
     Map<String, Object>? data,
     required T Function(Map<String, dynamic>) responseParser,
     bool isGetRequest = false,
+    TimeoutConfig? timeoutConfig,
   }) async {
     _clearTypeProvider();
     try {
       final Response response = isGetRequest
-          ? await _api.get(endpoint)
-          : await _api.post(endpoint, data: data);
+          ? await _api.get(endpoint, timeout: timeoutConfig)
+          : await _api.post(endpoint, data: data, timeout: timeoutConfig);
       return responseParser(response.data);
     } finally {
       _setTypeProviderLoading(false);
@@ -31,6 +33,7 @@ class GeminiRequestHandler {
   Stream<Candidates> executeStreamRequest({
     required String endpoint,
     required Map<String, Object> data,
+    TimeoutConfig? timeoutConfig,
   }) async* {
     _clearTypeProvider();
     try {
@@ -38,6 +41,7 @@ class GeminiRequestHandler {
         endpoint,
         data: data,
         isStreamResponse: true,
+        timeout: timeoutConfig,
       );
 
       if (response.statusCode == 200) {
